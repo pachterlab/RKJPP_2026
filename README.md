@@ -80,6 +80,7 @@ Reproducing the analysis (each writes figures + JSON under `notebooks/figures/`)
 
 ```bash
 # 1. simulation: six model families approach the ceiling, none crosses it
+#    Add --replot to redraw from saved JSON without recomputing.
 python scripts/attainable_bound_simulation.py
 
 # 2. per-cohort learning curves, fitted channel value and learning cost
@@ -100,6 +101,7 @@ python scripts/total_information_ucl.py kirc nsclc adni
 python scripts/shape_sensitivity.py kirc nsclc adni
 
 # 4. chain-rule decomposition against hand-specified anchor gene panels
+#    Add --replot to redraw from saved JSON without recomputing.
 python scripts/anchor_gene_saturation.py nsclc kirc adni
 
 # 4b. STRESS TEST (the headline figure): sweeps data size x genomics set x
@@ -107,8 +109,18 @@ python scripts/anchor_gene_saturation.py nsclc kirc adni
 #     Add --replot to redraw from saved JSON without recomputing.
 python scripts/bound_stress_test.py kirc nsclc adni
 
+# 4c. PER-GENE SWEEP: median-binarize each of the 2000 HVGs and classify it from the
+#     imaging components (logistic, 5-fold CV), against a whole-sweep permutation null
+#     and after covariate adjustment (KIRC demographics/scanner, NSCLC release tranche,
+#     ADNI age/sex/education). Needs data/ (symlink to the private data root is fine).
+#     Add --replot to redraw from saved JSON without recomputing.
+python scripts/per_gene_auc_sweep.py kirc nsclc adni
+
 # 5. cross-cohort table + summary figure (headline numbers)
 python scripts/attainable_summary.py
+
+# 6. raw vs. deconfounded spectrum, redrawn from the notebook's stats.json
+python scripts/deconfound_figure.py adni
 
 # TCGA-KIRC target classes and CT representations (Section "On TCGA-KIRC, CT decodes stage
 # and sex but not driver mutations", the sex-confound paragraph, Appendix figure and table).

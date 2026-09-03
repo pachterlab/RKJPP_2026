@@ -47,6 +47,7 @@ from sklearn.linear_model import RidgeCV
 from sklearn.preprocessing import StandardScaler
 
 from rgit import fit_recoverability
+from rgit.figures import label_panels
 from rgit.bounds import max_information_given_fourth_moment
 from attainable_bound_cohorts import (  # noqa: E402
     LOADERS, FIGDIR, OUTROOT, working_space, gaussian_rank, D_STAR, SEED,
@@ -212,6 +213,9 @@ def run(cohort):
     return res
 
 
+COHORT_LABEL = {"kirc": "TCGA-KIRC", "nsclc": "NSCLC", "adni": "ADNI"}
+
+
 def figure(all_res):
     """Colour encodes the genomics set, marker/linestyle the algorithm."""
     cohorts = list(all_res)
@@ -248,9 +252,9 @@ def figure(all_res):
         ax.set_ylim(-0.03 * top, top * 1.06)
         ax.set_xlabel("training patients $n$")
         ax.set_ylabel("achieved information (bits/patient, null-corrected)")
-        ax.set_title(f"{c.upper()}  ($n$={r['n']})")
         ax.grid(alpha=0.25)
         ax.text(0.03, 0.955,
+                f"{COHORT_LABEL.get(c, c.upper())}, $n$ = {r['n']}\n"
                 f"{len(r['achieved_null_corrected'])} configurations "
                 f"$\\times$ {len(ng)} sizes\n"
                 f"{len(r['crossings'])} crossings "
@@ -268,6 +272,7 @@ def figure(all_res):
                title="black: ceiling   |   colour: genomics set   |   "
                      "marker: algorithm", title_fontsize=8.5)
     fig.tight_layout(rect=[0, 0.02, 1, 1])
+    label_panels(fig, axes[0])
     fig.savefig(OUTROOT / "bound_stress_test.pdf", bbox_inches="tight")
     fig.savefig(OUTROOT / "bound_stress_test.png", dpi=160, bbox_inches="tight")
     print(f"\nwrote {OUTROOT/'bound_stress_test.pdf'}")

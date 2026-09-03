@@ -33,6 +33,7 @@ from sklearn.preprocessing import StandardScaler
 
 from rgit import cross_validated_recoverability
 from rgit.bounds import attainable_information, residualize
+from rgit.figures import label_panels
 from attainable_bound_cohorts import (  # noqa: E402  (same directory)
     LOADERS, FIGDIR, OUTROOT, gaussian_rank, working_space, N_HVG, D_STAR, SEED,
 )
@@ -231,8 +232,23 @@ def run(name):
         "cumulative_order": [found[o] for o in order],
     }
 
-    # --- figure -------------------------------------------------------------
     figdir = OUTROOT / FIGDIR[name]
+    figure(res, figdir)
+    (figdir / "anchor_saturation.json").write_text(json.dumps(res, indent=2))
+    print(f"\n  wrote {figdir/'anchor_saturation.pdf'}")
+    return res
+
+
+def figure(res, figdir):
+    """Two panels from a cohort's saved result: cumulative saturation curve and
+    the chain-rule split. Titles are left to the caption."""
+    cum_bits = np.asarray(res["cumulative_bits"], dtype=float)
+    total = float(res["I_total_bits"])
+    best_m, best_bits = int(res["best_panel_size"]), float(res["best_panel_bits"])
+    sel_null_q95 = float(res["best_panel_null_q95"])
+    I_a, I_r = float(res["I_anchor_bits"]), float(res["I_residual_bits"])
+    I_a_null_q95 = float(res["I_anchor_null_q95"])
+    I_r_null_q95 = float(res["I_residual_null_q95"])
     figdir.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.2))
 
@@ -241,38 +257,39 @@ def run(name):
     ax.plot(m, cum_bits, "o-", color="tab:blue", ms=4, label="anchor panel (cumulative)")
     ax.axhline(total, color="k", ls=":", lw=1.6,
                label=f"whole transcriptome ({total:.2f} bits)")
-    ax.axhline(np.percentile(sel_null, 95), color="grey", ls="--", lw=1.0,
+    ax.axhline(sel_null_q95, color="grey", ls="--", lw=1.0,
                label="selection-aware null (95%)")
     ax.plot([best_m], [best_bits], "*", color="crimson", ms=14, zorder=5,
             label=f"best panel: {best_m} genes ({100*best_bits/total:.0f}%)")
     ax.set_xlabel("number of anchor genes")
     ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
-    ax.set_ylim(0, max(max(cum_bits), total) * 1.28)
+    ax.set_ylim(0, max(max(cum_bits), total) * 1.6)
     ax.set_ylabel("attainable information (bits/patient)")
-    ax.set_title(f"(a) {name.upper()}: saturation with a handful of genes")
-    ax.legend(fontsize=7.5)
+    ax.legend(fontsize=7.5, loc="upper right", framealpha=0.95)
     ax.grid(alpha=0.25)
 
     ax = axes[1]
     ax.bar(["anchors\n$I(G_A;X)$", "everything else\n$I(G_{rest};X\\mid G_A)$"],
            [I_a, I_r], color=["tab:blue", "tab:orange"], alpha=0.85)
-    ax.errorbar([0, 1], [np.percentile(I_a_null, 95), np.percentile(I_r_null, 95)],
+    ax.errorbar([0, 1], [I_a_null_q95, I_r_null_q95],
                 fmt="_", ms=28, color="k", lw=1.6, label="permutation null (95%)")
     ax.set_ylabel("attainable information (bits/patient)")
-    ax.set_title(rf"(b) chain-rule split ($\eta$ = {eta:.2f})")
     ax.set_ylim(0, max(I_a, I_r) * 1.3)
     ax.legend(fontsize=7.5, loc="upper left")
     ax.grid(alpha=0.25, axis="y")
 
     fig.tight_layout()
+    label_panels(fig, axes)
     fig.savefig(figdir / "anchor_saturation.pdf", bbox_inches="tight")
     fig.savefig(figdir / "anchor_saturation.png", dpi=160, bbox_inches="tight")
-    (figdir / "anchor_saturation.json").write_text(json.dumps(res, indent=2))
-    print(f"\n  wrote {figdir/'anchor_saturation.pdf'}")
-    return res
 
 
 if __name__ == "__main__":
+    if "--replot" in sys.argv:      # redraw from saved JSON, no recomputation
+        saved = json.load(open(OUTROOT / "anchor_saturation.json"))
+        for c in [a for a in sys.argv[1:] if not a.startswith("--")] or list(saved):
+            figure(saved[c], OUTROOT / FIGDIR[c])
+        sys.exit(0)
     which = sys.argv[1:] or ["nsclc", "kirc"]
     out = {}
     for c in which:

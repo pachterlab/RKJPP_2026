@@ -30,6 +30,7 @@ from sklearn.linear_model import RidgeCV, LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 
+from rgit.figures import label_panels
 from rgit.bounds import (
     attainable_recoverability,
     attainable_information,
@@ -106,6 +107,65 @@ def model_zoo(n):
     return zoo
 
 
+def figure(summary):
+    """Redraw the two-panel figure from the saved summary (no recomputation)."""
+    rho2 = np.asarray(summary["planted_rho2"], dtype=float)
+    d_star = int(summary["d_star"])
+    rho2_1, nu1 = float(rho2[0]), float(summary["nu_leading"])
+    names = list(summary["models"])
+    n_dense = np.logspace(np.log10(15), np.log10(6000), 300)
+    bound = np.array(
+        [attainable_recoverability(rho2_1, n, d_star)[0] for n in n_dense]
+    )
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.4))
+
+    ax = axes[0]
+    ax.semilogx(n_dense, bound, "k-", lw=2.4, zorder=5,
+                label=r"attainable ceiling $\mathcal{R}_n$")
+    ax.axhline(rho2_1, color="k", ls=":", lw=1.6,
+               label=r"channel ceiling $\rho_1^2$ ($n=\infty$)")
+    ax.plot(N_GRID, summary["in_sample_ols_mean_r2"], color="crimson", ls="--",
+            marker="v", ms=4, lw=1.2, label="in-sample OLS (what a naive fit reports)")
+    for m in names:
+        ax.plot(N_GRID, summary["models"][m]["mean_r2"], marker="o", ms=3.5,
+                lw=1.3, alpha=0.85, label=m)
+    ax.axvline(nu1, color="grey", ls="-.", lw=1.0)
+    ax.annotate(r"$n=\nu$", xy=(nu1, 0.0), xytext=(10, 6),
+                textcoords="offset points", color="grey", fontsize=9)
+    ax.set_xlabel("training patients $n$")
+    ax.set_ylabel(r"held-out $R^2$ of leading genomic direction")
+    ax.set_ylim(-0.25, min(1.02, rho2_1 * 1.8))
+    ax.legend(fontsize=7.2, loc="lower right", framealpha=0.9)
+    ax.grid(alpha=0.25)
+
+    ax = axes[1]
+    In = np.array([attainable_information(rho2, n, d_star) for n in n_dense])
+    ax.semilogx(n_dense, In, "k-", lw=2.4, label=r"$\mathcal{I}_n$ (all directions)")
+    ax.axhline(channel_information(rho2), color="k", ls=":", lw=1.6,
+               label=r"$I(G;X)$ channel information")
+    for j, r2j in enumerate(rho2):
+        ax.semilogx(
+            n_dense,
+            [-0.5 * np.log2(1 - attainable_recoverability(r2j, n, d_star)[0])
+             for n in n_dense],
+            lw=1.1, alpha=0.8,
+            label=rf"direction {j+1} ($\rho^2={r2j:g}$)",
+        )
+    for n in (190, 129, 702):  # the three cohort sizes in the manuscript
+        ax.axvline(n, color="grey", lw=0.7, alpha=0.5)
+    ax.set_xlabel("cohort size $n$")
+    ax.set_ylabel("attainable information (bits / patient)")
+    ax.legend(fontsize=7.2, loc="upper left", framealpha=0.9)
+    ax.grid(alpha=0.25)
+
+    fig.tight_layout()
+    label_panels(fig, axes)
+    fig.savefig(OUT / "attainable_bound.pdf", bbox_inches="tight")
+    fig.savefig(OUT / "attainable_bound.png", dpi=160, bbox_inches="tight")
+
+
+
 def main():
     names = list(model_zoo(10_000).keys())
     curves = {m: {n: [] for n in N_GRID} for m in names}
@@ -134,10 +194,6 @@ def main():
     # ---------------- bound ----------------
     rho2_1 = RHO2[0]
     nu1 = float(learning_cost(rho2_1, D_STAR)[0])
-    n_dense = np.logspace(np.log10(15), np.log10(6000), 300)
-    bound = np.array(
-        [attainable_recoverability(rho2_1, n, D_STAR)[0] for n in n_dense]
-    )
 
     summary = {
         "planted_rho2": RHO2.tolist(),
@@ -173,53 +229,7 @@ def main():
         float(np.mean(insample[n])) for n in N_GRID
     ]
 
-    # ---------------- figure ----------------
-    fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.4))
-
-    ax = axes[0]
-    ax.semilogx(n_dense, bound, "k-", lw=2.4, zorder=5,
-                label=r"attainable ceiling $\mathcal{R}_n$")
-    ax.axhline(rho2_1, color="k", ls=":", lw=1.6,
-               label=r"channel ceiling $\rho_1^2$ ($n=\infty$)")
-    ax.plot(N_GRID, summary["in_sample_ols_mean_r2"], color="crimson", ls="--",
-            marker="v", ms=4, lw=1.2, label="in-sample OLS (what a naive fit reports)")
-    for m in names:
-        ax.plot(N_GRID, summary["models"][m]["mean_r2"], marker="o", ms=3.5,
-                lw=1.3, alpha=0.85, label=m)
-    ax.axvline(nu1, color="grey", ls="-.", lw=1.0)
-    ax.annotate(r"$n=\nu$", xy=(nu1, 0.0), xytext=(10, 6),
-                textcoords="offset points", color="grey", fontsize=9)
-    ax.set_xlabel("training patients $n$")
-    ax.set_ylabel(r"held-out $R^2$ of leading genomic direction")
-    ax.set_ylim(-0.25, min(1.02, rho2_1 * 1.8))
-    ax.set_title(r"(a) no algorithm crosses $\mathcal{R}_n$")
-    ax.legend(fontsize=7.2, loc="lower right", framealpha=0.9)
-    ax.grid(alpha=0.25)
-
-    ax = axes[1]
-    In = np.array([attainable_information(RHO2, n, D_STAR) for n in n_dense])
-    ax.semilogx(n_dense, In, "k-", lw=2.4, label=r"$\mathcal{I}_n$ (all directions)")
-    ax.axhline(channel_information(RHO2), color="k", ls=":", lw=1.6,
-               label=r"$I(G;X)$ channel information")
-    for j, r2j in enumerate(RHO2):
-        ax.semilogx(
-            n_dense,
-            [-0.5 * np.log2(1 - attainable_recoverability(r2j, n, D_STAR)[0])
-             for n in n_dense],
-            lw=1.1, alpha=0.8,
-            label=rf"direction {j+1} ($\rho^2={r2j:g}$)",
-        )
-    for n in (190, 129, 702):  # the three cohort sizes in the manuscript
-        ax.axvline(n, color="grey", lw=0.7, alpha=0.5)
-    ax.set_xlabel("cohort size $n$")
-    ax.set_ylabel("attainable information (bits / patient)")
-    ax.set_title("(b) the information ceiling is a function of cohort size")
-    ax.legend(fontsize=7.2, loc="upper left", framealpha=0.9)
-    ax.grid(alpha=0.25)
-
-    fig.tight_layout()
-    fig.savefig(OUT / "attainable_bound.pdf", bbox_inches="tight")
-    fig.savefig(OUT / "attainable_bound.png", dpi=160, bbox_inches="tight")
+    figure(summary)
 
     (OUT / "attainable_bound.json").write_text(json.dumps(summary, indent=2))
 
@@ -243,4 +253,7 @@ def main():
 
 
 if __name__ == "__main__":
+    if "--replot" in sys.argv:      # redraw from saved JSON, no recomputation
+        figure(json.load(open(OUT / "attainable_bound.json")))
+        sys.exit(0)
     main()

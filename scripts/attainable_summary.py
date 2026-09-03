@@ -28,6 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from rgit.figures import label_panels
 from rgit.bounds import (
     attainable_recoverability, attainable_information, auc_ceiling,
     channel_information, learning_cost, sample_size_for_fraction,
@@ -128,7 +129,6 @@ def main():
                     color=colors[c])
     ax.set_xlabel("cohort size $n$")
     ax.set_ylabel(r"attainable information $\mathcal{I}_n$ (bits/patient)")
-    ax.set_title("(a) the ceiling is a function of cohort size")
     ax.legend(fontsize=7.2, loc="upper left")
     ax.grid(alpha=0.25)
     ax.text(0.98, 0.04, "solid: 95% UCL   dashed: learning-curve fit",
@@ -146,12 +146,12 @@ def main():
     ax.set_xticks(x)
     ax.set_xticklabels([f"{r['label']}\n$n$={r['n']}" for r in rows], fontsize=8)
     ax.set_ylabel("leading recoverability")
-    ax.set_title("(b) what each cohort could and did deliver")
     ax.set_ylim(0, max(r["R_attainable_ucl"] for r in rows) * 1.42)
     ax.legend(fontsize=7.2, loc="upper left", ncol=1, framealpha=0.95)
     ax.grid(alpha=0.25, axis="y")
 
     fig.tight_layout()
+    label_panels(fig, axes)
     fig.savefig(OUT / "attainable_summary.pdf", bbox_inches="tight")
     fig.savefig(OUT / "attainable_summary.png", dpi=160, bbox_inches="tight")
     (OUT / "attainable_summary.json").write_text(json.dumps(rows, indent=2, default=float))

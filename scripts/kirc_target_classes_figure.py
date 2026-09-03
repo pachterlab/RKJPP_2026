@@ -12,6 +12,7 @@ and writes
 """
 
 import json
+import sys
 from pathlib import Path
 
 import matplotlib as mpl
@@ -19,6 +20,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+from rgit.figures import label_panels  # noqa: E402
 FIG = REPO / "notebooks/figures"
 
 targets = json.load(open(FIG / "kirc_target_classes.json"))["targets"]
@@ -91,7 +94,6 @@ axA.grid(axis="y", visible=False)
 axA.axhline(3.5, color=GRID, lw=0.8)
 axA.text(0.995, 6.15, "positive controls", fontsize=6, color=MUTED, va="top", ha="right")
 axA.text(0.995, 3.4, "driver mutation status", fontsize=6, color=MUTED, va="top", ha="right")
-axA.set_title("(a)", loc="left", fontweight="bold", pad=4)
 
 # (b) R^2 targets: raw (best representation) and after demographic + scanner adjustment
 ys = np.arange(len(R2_ROWS))[::-1]
@@ -118,7 +120,6 @@ axB.grid(axis="y", visible=False)
 axB.axhline(2.5, color=GRID, lw=0.8)
 axB.text(0.188, 4.05, "positive control", fontsize=6, color=MUTED, va="top", ha="right")
 axB.text(0.188, 2.42, "IMmotion151 signatures", fontsize=6, color=MUTED, va="top", ha="right")
-axB.set_title("(b)", loc="left", fontweight="bold", pad=4)
 
 handles = [
     Line2D([], [], color=DEEMPH, lw=3.5, label="permutation null (95th percentile)"),
@@ -131,6 +132,7 @@ handles = [
 fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False, handlelength=1.6,
            columnspacing=1.2, bbox_to_anchor=(0.5, -0.02))
 fig.tight_layout(w_pad=1.5, rect=(0, 0.13, 1, 1))
+label_panels(fig, (axA, axB))
 for ext in ("pdf", "png"):
     fig.savefig(FIG / f"kirc_target_classes.{ext}", bbox_inches="tight")
 print("saved", FIG / "kirc_target_classes.pdf")
@@ -151,7 +153,6 @@ axA.set_yticklabels([PRETTY[m] for m in IMAGING])
 axA.set_xlabel("transcriptome variance\nrecovered (%)")
 axA.set_xlim(0, max(tau) * 1.35)
 axA.grid(axis="y", visible=False)
-axA.set_title("(a)", loc="left", fontweight="bold", pad=4)
 
 xs = np.arange(1, N_AXES + 1)
 axB.plot(xs, np.mean([spec_null[m] for m in IMAGING], axis=0), color=MUTED, lw=0.9, ls="--", zorder=2)
@@ -161,7 +162,6 @@ axB.set_xlabel("canonical axis")
 axB.set_ylabel(r"cross-validated $\hat R_i^{\mathrm{cv}}$")
 axB.set_xticks([1, 3, 5, 7, 9, 11])
 axB.axhline(0, color=MUTED, lw=0.6)
-axB.set_title("(b)", loc="left", fontweight="bold", pad=4)
 
 raw = [bounds[m]["R1_cv"] for m in IMAGING]
 adj = [bounds[m]["deconf_all"]["R1_cv"] for m in IMAGING]
@@ -174,17 +174,17 @@ axC.set_yticklabels([])
 axC.set_xlabel(r"leading axis $\hat R_1^{\mathrm{cv}}$")
 axC.set_xlim(0, 0.45)
 axC.grid(axis="y", visible=False)
-axC.set_title("(c)", loc="left", fontweight="bold", pad=4)
 
 handles = [Line2D([], [], color=COLORS[m], lw=1.6, label=PRETTY[m]) for m in IMAGING] + [
-    Line2D([], [], color=MUTED, lw=0.9, ls="--", label="permutation null (95th percentile), (b)"),
-    Patch(color=MUTED, label="raw, (c)"),
-    Patch(color=MUTED, alpha=0.4, label="adjusted, (c)"),
-    Line2D([], [], color=INK, lw=0.8, label="null (95th percentile), (c)"),
+    Line2D([], [], color=MUTED, lw=0.9, ls="--", label="permutation null (95th percentile), panel b"),
+    Patch(color=MUTED, label="raw, panel c"),
+    Patch(color=MUTED, alpha=0.4, label="adjusted, panel c"),
+    Line2D([], [], color=INK, lw=0.8, label="null (95th percentile), panel c"),
 ]
 fig.legend(handles=handles, loc="lower center", ncol=4, frameon=False, handlelength=1.6,
            columnspacing=1.2, bbox_to_anchor=(0.5, -0.02))
 fig.tight_layout(w_pad=1.2, rect=(0, 0.16, 1, 1))
+label_panels(fig, (axA, axB, axC))
 for ext in ("pdf", "png"):
     fig.savefig(FIG / f"kirc_representations.{ext}", bbox_inches="tight")
 print("saved", FIG / "kirc_representations.pdf")
