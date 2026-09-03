@@ -109,6 +109,17 @@ python scripts/bound_stress_test.py kirc nsclc adni
 
 # 5. cross-cohort table + summary figure (headline numbers)
 python scripts/attainable_summary.py
+
+# TCGA-KIRC target classes and CT representations (Section "On TCGA-KIRC, CT decodes stage
+# and sex but not driver mutations", the sex-confound paragraph, Appendix figure and table).
+# Needs the four KIRC imaging matrices (tumor/organ radiomics, tumor/whole-volume RadImageNet),
+# gene_expression.h5ad, mutated_genes.h5ad, clinical_tcga.tsv and the TCIA series digest.
+python scripts/build_kirc_representation_notebook.py
+jupyter nbconvert --execute --inplace notebooks/kirc_representation_bound.ipynb   # -> notebooks/figures/kirc_representations/summary.json
+python scripts/kirc_channel_ucl_by_dimension.py                                   # -> notebooks/figures/kirc_representations/invert2.json
+python scripts/kirc_per_gene_budget.py                                            # -> notebooks/figures/kirc_representations/budget.json
+python scripts/kirc_target_classes.py                                             # -> notebooks/figures/kirc_target_classes.json
+python scripts/kirc_target_classes_figure.py                                      # -> kirc_target_classes.pdf, kirc_representations.pdf, kirc_target_classes_table.tex
 ```
 
 Run 2–4 before 5; step 5 reads their JSON outputs (3b requires 3a; 3c requires both).

@@ -1,0 +1,360 @@
+{
+  "cohort": {
+    "n": 190,
+    "p_star": 38,
+    "n_mutation": 131,
+    "p_star_mutation": 26
+  },
+  "targets": {
+    "angiogenesis": {
+      "kind": "signature",
+      "n": 190,
+      "n_genes": 6,
+      "genes": [
+        "VEGFA",
+        "KDR",
+        "ESM1",
+        "PECAM1",
+        "ANGPTL4",
+        "CD34"
+      ],
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.07088778132112017,
+          "null_mean": -0.003890324733411669,
+          "null_q95": 0.010202276915354278,
+          "p": 0.004975124378109453
+        },
+        "organ_radiomics": {
+          "observed": 0.013783575210407517,
+          "null_mean": -0.002882272561703168,
+          "null_q95": 0.023233530413090845,
+          "p": 0.0845771144278607
+        },
+        "tumor_radimagenet": {
+          "observed": -0.01042637659569201,
+          "null_mean": -0.005126441162121305,
+          "null_q95": 0.015745052635551208,
+          "p": 0.6716417910447762
+        },
+        "whole_radimagenet": {
+          "observed": 0.013621011984633502,
+          "null_mean": -0.006428140949497785,
+          "null_q95": 0.020105456807333062,
+          "p": 0.07462686567164178
+        }
+      },
+      "best_image": "tumor_radiomics",
+      "deconf_demo_r2": 0.0794630150382678,
+      "deconf_all_r2": 0.08869324833244807
+    },
+    "t_effector": {
+      "kind": "signature",
+      "n": 190,
+      "n_genes": 5,
+      "genes": [
+        "CD8A",
+        "EOMES",
+        "PRF1",
+        "IFNG",
+        "CD274"
+      ],
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": -0.001011152591179787,
+          "null_mean": -0.005241003784845918,
+          "null_q95": 0.010959917139981939,
+          "p": 0.17412935323383086
+        },
+        "organ_radiomics": {
+          "observed": -0.004111342201001511,
+          "null_mean": -0.005253221879634451,
+          "null_q95": 0.013737797472423097,
+          "p": 0.22885572139303484
+        },
+        "tumor_radimagenet": {
+          "observed": -0.0018490221683338248,
+          "null_mean": -0.006595529603625241,
+          "null_q95": 0.0158051105557028,
+          "p": 0.20398009950248755
+        },
+        "whole_radimagenet": {
+          "observed": 0.025677218941134727,
+          "null_mean": -0.008482152783431047,
+          "null_q95": 0.020782911306849245,
+          "p": 0.04975124378109453
+        }
+      },
+      "best_image": "whole_radimagenet",
+      "deconf_demo_r2": 0.027323263922298002,
+      "deconf_all_r2": 0.03395213712131595
+    },
+    "myeloid_inflammation": {
+      "kind": "signature",
+      "n": 190,
+      "n_genes": 6,
+      "genes": [
+        "IL6",
+        "CXCL1",
+        "CXCL2",
+        "CXCL3",
+        "CXCL8",
+        "PTGS2"
+      ],
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.02679386838321851,
+          "null_mean": -0.0029045212644481827,
+          "null_q95": 0.01274391109241911,
+          "p": 0.024875621890547265
+        },
+        "organ_radiomics": {
+          "observed": 0.028554538673031926,
+          "null_mean": -0.002218471047446149,
+          "null_q95": 0.01701239626536964,
+          "p": 0.024875621890547265
+        },
+        "tumor_radimagenet": {
+          "observed": -0.002925085132670757,
+          "null_mean": -0.005169861537917482,
+          "null_q95": 0.016449389838074174,
+          "p": 0.263681592039801
+        },
+        "whole_radimagenet": {
+          "observed": 0.03376521237769292,
+          "null_mean": -0.004834844889986485,
+          "null_q95": 0.017121398479686387,
+          "p": 0.009950248756218905
+        }
+      },
+      "best_image": "whole_radimagenet",
+      "deconf_demo_r2": 0.04054179962092752,
+      "deconf_all_r2": 0.03653419832622096
+    },
+    "mut_VHL": {
+      "kind": "mutation",
+      "n": 131,
+      "n_mutated": 63,
+      "prevalence": 0.48091603053435117,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.6010737628384687,
+          "null_mean": 0.5379726890756302,
+          "null_q95": 0.6293417366946779,
+          "p": 0.14925373134328357
+        },
+        "organ_radiomics": {
+          "observed": 0.6176470588235294,
+          "null_mean": 0.5381851073762839,
+          "null_q95": 0.6247899159663866,
+          "p": 0.07960199004975124
+        },
+        "tumor_radimagenet": {
+          "observed": 0.5413165266106443,
+          "null_mean": 0.5339040616246499,
+          "null_q95": 0.6074579831932773,
+          "p": 0.472636815920398
+        },
+        "whole_radimagenet": {
+          "observed": 0.5282446311858077,
+          "null_mean": 0.5292985527544352,
+          "null_q95": 0.6361344537815126,
+          "p": 0.4975124378109453
+        }
+      },
+      "best_image": "organ_radiomics"
+    },
+    "mut_PBRM1": {
+      "kind": "mutation",
+      "n": 131,
+      "n_mutated": 49,
+      "prevalence": 0.37404580152671757,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.5612244897959183,
+          "null_mean": 0.5341786958685912,
+          "null_q95": 0.6398954703832751,
+          "p": 0.31840796019900497
+        },
+        "organ_radiomics": {
+          "observed": 0.5293678446988552,
+          "null_mean": 0.535202837232454,
+          "null_q95": 0.6421105027376803,
+          "p": 0.5472636815920398
+        },
+        "tumor_radimagenet": {
+          "observed": 0.42782478845196614,
+          "null_mean": 0.5302264808362369,
+          "null_q95": 0.6194748631159781,
+          "p": 0.9253731343283582
+        },
+        "whole_radimagenet": {
+          "observed": 0.43155798904927817,
+          "null_mean": 0.5232105525136884,
+          "null_q95": 0.617259830761573,
+          "p": 0.945273631840796
+        }
+      },
+      "best_image": "tumor_radiomics"
+    },
+    "mut_BAP1": {
+      "kind": "mutation",
+      "n": 131,
+      "n_mutated": 16,
+      "prevalence": 0.12213740458015267,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.6103260869565218,
+          "null_mean": 0.5500923913043478,
+          "null_q95": 0.6957065217391305,
+          "p": 0.26865671641791045
+        },
+        "organ_radiomics": {
+          "observed": 0.5684782608695652,
+          "null_mean": 0.5653994565217392,
+          "null_q95": 0.7085054347826086,
+          "p": 0.5024875621890548
+        },
+        "tumor_radimagenet": {
+          "observed": 0.6130434782608696,
+          "null_mean": 0.5466711956521739,
+          "null_q95": 0.6799999999999999,
+          "p": 0.21393034825870647
+        },
+        "whole_radimagenet": {
+          "observed": 0.5619565217391304,
+          "null_mean": 0.5401766304347827,
+          "null_q95": 0.6848233695652174,
+          "p": 0.43781094527363185
+        }
+      },
+      "best_image": "tumor_radimagenet"
+    },
+    "mut_SETD2": {
+      "kind": "mutation",
+      "n": 131,
+      "n_mutated": 12,
+      "prevalence": 0.0916030534351145,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.49299719887955185,
+          "null_mean": 0.5523354341736695,
+          "null_q95": 0.7024159663865546,
+          "p": 0.7263681592039801
+        },
+        "organ_radiomics": {
+          "observed": 0.5343137254901961,
+          "null_mean": 0.5482370448179271,
+          "null_q95": 0.7157913165266105,
+          "p": 0.582089552238806
+        },
+        "tumor_radimagenet": {
+          "observed": 0.5812324929971988,
+          "null_mean": 0.5503536414565826,
+          "null_q95": 0.7292717086834734,
+          "p": 0.3880597014925373
+        },
+        "whole_radimagenet": {
+          "observed": 0.44397759103641454,
+          "null_mean": 0.5464233193277311,
+          "null_q95": 0.7317927170868347,
+          "p": 0.8308457711442786
+        }
+      },
+      "best_image": "tumor_radimagenet"
+    },
+    "stage_III_IV": {
+      "kind": "control_binary",
+      "n": 154,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.7909206004702478,
+          "null_mean": 0.536015554349792,
+          "null_q95": 0.6189726894555977,
+          "p": 0.004975124378109453
+        },
+        "organ_radiomics": {
+          "observed": 0.729064930367155,
+          "null_mean": 0.5284264785675529,
+          "null_q95": 0.6165852776270573,
+          "p": 0.004975124378109453
+        },
+        "tumor_radimagenet": {
+          "observed": 0.8012298788207632,
+          "null_mean": 0.5330028034002532,
+          "null_q95": 0.6343913908482546,
+          "p": 0.004975124378109453
+        },
+        "whole_radimagenet": {
+          "observed": 0.5870862723819859,
+          "null_mean": 0.5363582926388135,
+          "null_q95": 0.6351962380177246,
+          "p": 0.21393034825870647
+        }
+      },
+      "best_image": "tumor_radimagenet"
+    },
+    "sex_female": {
+      "kind": "control_binary",
+      "n": 190,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.7211076923076923,
+          "null_mean": 0.5339501538461539,
+          "null_q95": 0.6124676923076923,
+          "p": 0.004975124378109453
+        },
+        "organ_radiomics": {
+          "observed": 0.7252923076923077,
+          "null_mean": 0.5292738461538462,
+          "null_q95": 0.6133661538461539,
+          "p": 0.004975124378109453
+        },
+        "tumor_radimagenet": {
+          "observed": 0.5833846153846154,
+          "null_mean": 0.5281409230769231,
+          "null_q95": 0.6039692307692307,
+          "p": 0.15422885572139303
+        },
+        "whole_radimagenet": {
+          "observed": 0.8572307692307694,
+          "null_mean": 0.5243384615384616,
+          "null_q95": 0.6065292307692308,
+          "p": 0.004975124378109453
+        }
+      },
+      "best_image": "whole_radimagenet"
+    },
+    "age": {
+      "kind": "control_continuous",
+      "n": 190,
+      "by_image": {
+        "tumor_radiomics": {
+          "observed": 0.07656946060476277,
+          "null_mean": -0.01565531652931552,
+          "null_q95": 0.0032827911210894342,
+          "p": 0.004975124378109453
+        },
+        "organ_radiomics": {
+          "observed": 0.12231530502360399,
+          "null_mean": -0.016357670606536426,
+          "null_q95": -0.0007326479152425573,
+          "p": 0.004975124378109453
+        },
+        "tumor_radimagenet": {
+          "observed": -0.02066735922876428,
+          "null_mean": -0.017986571018946657,
+          "null_q95": 0.00839627318761293,
+          "p": 0.4527363184079602
+        },
+        "whole_radimagenet": {
+          "observed": -3.9508535438992354e-05,
+          "null_mean": -0.019902940096061705,
+          "null_q95": 0.00041648857689882034,
+          "p": 0.05970149253731343
+        }
+      },
+      "best_image": "organ_radiomics"
+    }
+  }
+}
