@@ -485,8 +485,9 @@ def _per_gene_auc(cfg, pre, fit, stats, figs):
         return (np.mean(a_lr) if a_lr else np.nan, np.mean(a_rf) if a_rf else np.nan)
 
     def _auc_ceiling(R):
-        R = np.clip(R, 0.0, 1.0 - 1e-9)
-        return float(_st.norm.cdf(np.sqrt(R / (1.0 - R)) / np.sqrt(2.0)))
+        # exact Bayes AUC for a median-binarized latent Gaussian: 1/2 + (2/pi) arcsin(sqrt(R/2))
+        R = np.clip(R, 0.0, 1.0)
+        return float(0.5 + (2.0 / np.pi) * np.arcsin(np.sqrt(R / 2.0)))
 
     rows = []
     for j in np.concatenate([high_genes, low_genes]):
@@ -513,7 +514,7 @@ def _per_gene_auc(cfg, pre, fit, stats, figs):
             ax.bar(xp - w, gene_table["AUC_LR"], w, label="logistic $L_2$", color="#4C72B0")
             ax.bar(xp, gene_table["AUC_RF"], w, label="random forest", color="#55A868")
             ax.bar(xp + w, gene_table["AUC_ceiling"], w,
-                   label=r"Bayes ceiling $\Phi(\sqrt{R/(1-R)}/\sqrt{2})$", color="#C44E52", alpha=0.7)
+                   label=r"Bayes ceiling $\tfrac12+\tfrac{2}{\pi}\arcsin\sqrt{R/2}$", color="#C44E52", alpha=0.7)
         else:
             w = 0.38
             ax.bar(xp - w / 2, gene_table["AUC_LR"], w, label="logistic $L_2$", color="#4C72B0")

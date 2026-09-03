@@ -65,7 +65,7 @@ rgit.attainable_recoverability(0.1, n=190, d_star=20)   # 0.051
 rgit.attainable_information([0.1, 0.05], n=190, d_star=20)  # bits/patient
 rgit.learning_cost(0.1, 20)              # 180 patients
 rgit.sample_size_for_fraction(0.1, 20, 0.9)   # 1620 patients for 90%
-rgit.auc_ceiling(rgit.attainable_recoverability(0.1, 190, 20))  # AUC <= 0.565
+rgit.auc_ceiling(rgit.attainable_recoverability(0.1, 190, 20))  # AUC <= 0.602
 
 # total retention, not just the best axis: at fixed total signal T the
 # information is maximized by CONCENTRATION, so this is the knapsack optimum

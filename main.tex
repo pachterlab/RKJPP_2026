@@ -108,7 +108,7 @@ NSCLC cohort ($n=129$, CT), and ADNI ($n=702$, MRI) admit at most $0.76$,
 $0.18$ and $1.20$ bits per patient about the transcriptome --- around one
 perfectly measured binary biomarker apiece, with the NSCLC statistic in fact
 falling below its own permutation null --- and
-equivalently a ceiling of $\mathrm{AUC}\le 0.68$--$0.75$ on \emph{any}
+equivalently a ceiling of $\mathrm{AUC}\le 0.76$--$0.83$ on \emph{any}
 classifier for \emph{any} binarized genomic feature, which is where the
 published per-gene AUCs in this literature in fact sit. Stress-testing the
 bound against every combination of training-set size, genomic feature set and
@@ -1184,7 +1184,7 @@ latent recoverability $\mathcal{R}_n(R_j^Z)$ for $R_j^Z$ in
 \eqref{eq:bern-auc} gives the AUC any classifier trained on $n$ patients can
 reach for gene $j$,
 \begin{equation}
-\mathrm{AUC}_j(n)\ \le\ \Phi\!\left(\sqrt{\frac{\mathcal{R}_n(R_j^Z)}{2\,\big(1-\mathcal{R}_n(R_j^Z)\big)}}\right).
+\mathrm{AUC}_j(n)\ \le\ \tfrac12+\tfrac{2}{\pi}\arcsin\!\sqrt{\mathcal{R}_n(R_j^Z)/2}\,.
 \label{eq:attainable-auc}
 \end{equation}
 This is the object to compare against a reported per-gene AUC, and it explains
@@ -1786,8 +1786,8 @@ consequential output: (5) a ceiling $\mathcal{I}_n$ on how much of that budget a
 cohort of size $n$ can actually claim. The four quantities above are properties
 of the biology--imaging channel; $\mathcal{I}_n$ is a property of the
 \emph{study}. Reporting it changes what a null result means. A per-gene AUC of
-$0.62$ is uninformative in isolation, but against an attainable ceiling of
-$0.68$ it is close to everything the cohort had to give, whereas against a
+$0.66$ is uninformative in isolation, but against an attainable ceiling of
+$0.76$ it is most of what the cohort had to give, whereas against a
 ceiling of $0.95$ it is a failure of the predictor. Three practical rules follow
 directly:
 \begin{itemize}
@@ -1906,10 +1906,15 @@ $(\Sigma_Z, B, \sigma^2)$ exactly as in Section~\ref{sec:posterior}. The
 direct analog of $R(v)$ in the Gaussian case, and the binary AUC of any
 predictor $\hat G_j(x)$ is bounded by
 \begin{equation}
-  \mathrm{AUC}_j \;\le\; \Phi\!\left(\sqrt{\tfrac{R_j^Z}{1-R_j^Z}}\Big/\sqrt{2}\right),
+  \mathrm{AUC}_j \;\le\; \tfrac12+\tfrac{2}{\pi}\arcsin\!\sqrt{R_j^Z/2},
   \label{eq:bern-auc}
 \end{equation}
-attained by the Bayes classifier $\pi_j(x) > p_j$. Equation~\eqref{eq:bern-auc}
+attained by the Bayes score $\pi_j(x)$ when $G_j$ is binarized at its median
+($p_j=\tfrac12$). The right-hand side is the trivariate Gaussian orthant
+probability $\Pr(\mu_j(x_1)>\mu_j(x_0)\mid Z_{j,1}>0,\,Z_{j,0}\le0)$ and is the
+least favorable prevalence: a feature binarized away from its median admits a
+higher Bayes AUC at the same $R_j^Z$, so \eqref{eq:bern-auc} is a valid ceiling
+only for median splits and is conservative elsewhere. Equation~\eqref{eq:bern-auc}
 is the natural object to compare against the empirical per-gene
 $\mathrm{AUC}_{\mathrm{LR}}$ and $\mathrm{AUC}_{\mathrm{RF}}$ of
 Section~\ref{sec:kirc-pergene}: an empirical AUC near $0.5$ is consistent with
@@ -3094,9 +3099,9 @@ should report.
 cohort & $n$ & $\hat\rho_1^2$ & $\bar\rho_1^2$ &
 $\mathcal{R}_n$ & $\mathcal{I}_n$ & flat family & spectrum-free & $\mathrm{AUC}_{\max}$\\
 \midrule
-TCGA-KIRC (CT) & $190$ & $0.152$ & $0.370$ & $0.314$ & $0.27$ & $0.57$ & $\mathbf{0.76}$ & $0.68$\\
-NSCLC (CT)     & $129$ & $0.151$ & $0.497$ & $0.429$ & $0.41$ & $0.21$ & $\mathbf{0.18}$ & $0.73$\\
-ADNI (MRI)     & $702$ & $0.177$ & $0.492$ & $0.478$ & $0.47$ & $0.65$ & $\mathbf{1.20}$ & $0.75$\\
+TCGA-KIRC (CT) & $190$ & $0.152$ & $0.370$ & $0.314$ & $0.27$ & $0.57$ & $\mathbf{0.76}$ & $0.76$\\
+NSCLC (CT)     & $129$ & $0.151$ & $0.497$ & $0.429$ & $0.41$ & $0.21$ & $\mathbf{0.18}$ & $0.81$\\
+ADNI (MRI)     & $702$ & $0.177$ & $0.492$ & $0.478$ & $0.47$ & $0.65$ & $\mathbf{1.20}$ & $0.83$\\
 \bottomrule
 \end{tabular}
 \caption{Attainable-information ceilings at each cohort's own sample size, in
@@ -3111,7 +3116,7 @@ takes a supremum over flat spectra only, and the boldface second from
 spectrum-free column is the number to quote; it costs roughly a factor of
 $1.3$--$1.8$ over the flat-family figure, which is the price of dropping the
 shape restriction. $\mathrm{AUC}_{\max}$ is
-\eqref{eq:attainable-auc} and applies per binarized genomic feature. Every entry
+\eqref{eq:attainable-auc} at $\bar\rho_1^2$ and applies per median-binarized genomic feature. Every entry
 is an upper bound: no algorithm trained on that cohort can exceed it.}
 \label{tab:attainable}
 \end{table}
@@ -3123,12 +3128,12 @@ At $n=190$, a contrast CT of a clear-cell renal tumor is worth at most $0.57$
 of one perfectly measured $50/50$ mutation call --- summed over every genomic
 direction, not just the best one. The corresponding
 statement for any classifier of any binarized genomic feature is
-$\mathrm{AUC}\le 0.68$ --- and the per-gene validation of
+$\mathrm{AUC}\le 0.76$ --- and the per-gene validation of
 Section~\ref{sec:kirc-pergene}, run before any of this theory existed, returned
 $0.643$ (logistic) and $0.665$ (random forest) on the image-identifiable group.
-Those observed values sit just under the $0.68$ ceiling and above the $0.59$
-implied by the tighter learning-curve fit; the gap is the expected size of the
-non-nested gene-selection effect that Section~\ref{sec:conclusion} already flags
+Those observed values sit below the $0.76$ ceiling and at or just above the
+$0.64$ implied by the tighter learning-curve fit; the excess over the fit value
+is the expected size of the non-nested gene-selection effect that Section~\ref{sec:conclusion} already flags
 as a limitation, which the ceiling now quantifies rather than merely notes.
 
 \begin{figure}[h]
@@ -3341,7 +3346,7 @@ over every genomic direction and free of any assumption on the spectrum's shape
 (Table~\ref{tab:attainable}) --- around one perfectly measured binary biomarker
 apiece --- and equivalently cap \emph{any}
 classifier of \emph{any} binarized genomic feature at
-$\mathrm{AUC}\le0.68$--$0.75$, which is where the per-gene AUCs of
+$\mathrm{AUC}\le0.76$--$0.83$, which is where the per-gene AUCs of
 Section~\ref{sec:kirc-pergene} in fact sit. Sweeping training-set size, genomic feature
 set and learning algorithm over $360$ configurations, none crosses the ceiling
 and $59$ of $60$ stay off the floor (Fig.~\ref{fig:stress}); within a gene set
